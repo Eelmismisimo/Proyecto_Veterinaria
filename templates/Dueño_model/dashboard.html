@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}AdminDash{% endblock title %}
+
+{% block Contenido %}
+    <ul class="list-group">
+    <a class="list-group-item" href="{% url "listaClientes" %}">Clientes</a>
+    <a class="list-group-item">A second item</a>
+    <a class="list-group-item">A third item</a>
+    <a class="list-group-item">A fourth item</a>
+    <a class="list-group-item">And a fifth one</a>
+    </ul>
+{% endblock Contenido%}

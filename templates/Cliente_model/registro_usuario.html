@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Registro{% endblock title %}
+
+{% block Contenido %}
+    <h3>Registro usuario<h3>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mt-2">
+            <label for="username">Usuario</label>
+            <input type="text" name="username" id=username class="form-control">
+            {% if form.username.errors %}
+                <span class"text-danger">{{form.username.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="email">Email</label>
+            <input type="email" name="email" id=email class="form-control">
+            {% if form.email.errors %}
+                <span class"text-danger">{{form.email.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="password1">Contraseña</label>
+            <input type="password" name="password1" id=password1 class="form-control">
+            {% if form.password1.errors %}
+                <span class"text-danger">{{form.password1.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="password2">Confirma Contraseña</label>
+            <input type="password" name="password2" id=password2 class="form-control">
+            {% if form.password2.errors %}
+                <span class"text-danger">{{form.password2.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="rut">rut</label>
+            <input type="text" name="rut" id='rut' class="form-control">
+            {% if form.rut.errors %}
+                <span class"text-danger">{{form.rut.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="telefono">Telefono</label>
+            <input type="telefono" name="telefono" id='telefono' class="form-control">
+            {% if form.telefono.errors %}
+                <span class"text-danger">{{form.telefono.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="direccion">Direccion</label>
+            <input type="text" name="direccion" id='direccion' class="form-control">
+            {% if form.direccion.errors %}
+                <span class"text-danger">{{form.direccion.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="nombreCompleto">Nombre Completo</label>
+            <input type="text" name="nombreCompleto" id='nombreCompleto' class="form-control">
+            {% if form.nombreCompleto.errors %}
+                <span class"text-danger">{{form.nombreCompleto.errors}}</span>
+            {% endif %}
+        </div>
+        <div class="mt-2">
+            <label for="tipo_Usuario">Tipo de usuario</label>
+            <select name="tipo_Usuario" id="tipo_Usuario" class="form-control">
+                <option value="">Seleccione un tipo</option>
+                <option value="Cliente">Cliente</option>
+            </select>
+            {% if form.tipo_Usuario.errors %}
+                <span class"text-danger">{{form.tipo_Usuario.errors}}</span>
+            {% endif %}
+        </div>
+        <br>
+        <button class="btn btn-primary">Crear</button>
+    </form>
+
+
+{% endblock Contenido %}

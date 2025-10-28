@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block Contenido %}
+<form method="post">
+    {{form.as_p}}
+    {% csrf_token %}
+    <input type="submit" value="Actualizar" class="btn btn-info">
+</form>
+{% endblock Contenido %}

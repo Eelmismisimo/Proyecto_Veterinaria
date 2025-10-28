@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Autorizacion{% endblock title %}
+
+
+{% block Contenido %}
+ <h4>Se necesita cuenta autorizada<h4>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mt-2">
+            <label for="username">Usuario</label>
+            <input type="text" name="username" id=username class="form-control">
+        </div>
+        <div class="mt-2">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" id=password class="form-control">
+        </div>
+        <span class="text-danger">{{error}}</span>
+        <button class="btn btn-primary">Entrar</button>
+    </form>
+
+
+{% endblock Contenido %}

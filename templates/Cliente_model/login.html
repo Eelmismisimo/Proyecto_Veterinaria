@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Inicio Sesion{% endblock title %}
+
+
+{% block Contenido %}
+ <h4>Iniciar sesion<h4>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mt-2">
+            <label for="username">Usuario</label>
+            <input type="text" name="username" id=username class="form-control">
+        </div>
+        <div class="mt-2">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" id=password class="form-control">
+        </div>
+        <span class="text-danger">{{error}}</span>
+        <button class="btn btn-primary">Entrar</button>
+        <a href="{% url "crearUsuario" %}">Registrar aqui</a>
+    </form>
+
+
+{% endblock Contenido %}

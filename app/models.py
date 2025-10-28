@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class UsuarioEx(AbstractUser):
-        rut = models.CharField(max_length=10)
+        rut = models.CharField(max_length=10, unique=True)
         telefono = models.IntegerField()
         tipo_Usuario = models.CharField(max_length=20, choices=[('Administrador','Administrador'),
                                                                 ('Veterinario','Veterinario'),
