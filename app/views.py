@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from .models import Mascota, Dueño
 from .forms import MascotaForm
-from .forms import CitaModelForm
+from .forms import CitaForm
 
 def tiene_rol(user, rol_code):
     if not user.is_authenticated:
