@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from .models import Mascota, Dueño
 from .forms import MascotaForm
+from .forms import CitaModelForm
 
 def tiene_rol(user, rol_code):
     if not user.is_authenticated:
@@ -94,3 +95,74 @@ def mascota_eliminar(request, id):
         messages.success(request, f'Mascota "{nombre}" eliminada correctamente.')
         return redirect('mascota_listado')
     return render(request, 'mascota/confirm_delete.html', {'mascota': mascota})
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+def cita_crear(request):
+    if not (tiene_rol(request.user, 'REC') or tiene_rol(request.user, 'ADM')):
+        messages.error(request, 'Acceso denegado. Solo la Recepcionista puede agendar citas.')
+        return redirect('dashboard')
+    form = CitaModelForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        nueva_cita = form.save(commit=False)
+        if not nueva_cita.estado:
+             nueva_cita.estado = 'PRO' 
+        try:
+            nueva_cita.full_clean() 
+            nueva_cita.save()
+            messages.success(request, 'Cita agendada con éxito. Disponibilidad y superposición validadas.')
+            return redirect('cita_listado')
+        except ValidationError as e:
+            form.add_error(None, e)
+            messages.error(request, 'Error de validación al agendar la cita. Verifique horario y disponibilidad del veterinario.')
+    return render(request, 'cita/form.html', {'form': form, 'titulo': 'Agendar Nueva Cita'})
+# ----------------------------------------------------------------------
+def cita_modificar(request, id):
+    if not (tiene_rol(request.user, 'REC') or tiene_rol(request.user, 'ADM')):
+        messages.error(request, 'Acceso denegado. Solo la Recepcionista puede modificar citas.')
+        return redirect('dashboard')
+    cita = get_object_or_404(Cita, id=id)
+    form = CitaModelForm(request.POST or None, instance=cita)
+    if request.method == 'POST' and form.is_valid():
+        cita_modificada = form.save(commit=False)
+        try:
+            cita_modificada.full_clean() 
+            cita_modificada.save()
+            messages.success(request, 'Cita modificada con éxito.')
+            return redirect('cita_listado')
+        except ValidationError as e:
+            form.add_error(None, e)
+            messages.error(request, 'Error de validación al modificar la cita.')
+    return render(request, 'cita/form.html', {'form': form, 'titulo': f'Modificar Cita ID: {cita.id}'})
+# ----------------------------------------------------------------------
+def cita_cancelar(request, id):
+    if not (tiene_rol(request.user, 'REC') or tiene_rol(request.user, 'ADM')):
+        messages.error(request, 'Acceso denegado. Solo la Recepcionista puede cancelar citas.')
+        return redirect('dashboard')
+    cita = get_object_or_404(Cita, id=id)
+    if request.method == 'POST':
+        if cita.estado != 'COM': 
+            cita.estado = 'CAN' 
+            cita.save()
+            messages.warning(request, f'Cita de {cita.mascota.nombre} cancelada.')
+        else:
+            messages.error(request, 'No se puede cancelar una cita que ya fue completada.')   
+        return redirect('cita_listado')
+    return render(request, 'cita/confirm_cancel.html', {'cita': cita})
+# ----------------------------------------------------------------------
+def cita_listado(request):
+    citas = Cita.objects.all().select_related('mascota', 'veterinario')
+    if tiene_rol(request.user, 'VET'):
+        try:
+            veterinario_actual = Veterinario.objects.get(user=request.user)
+            citas = citas.filter(veterinario=veterinario_actual).order_by('fecha_hora')
+        except Veterinario.DoesNotExist:
+            citas = Cita.objects.none()
+            messages.warning(request, 'Su perfil de veterinario no está completo.')
+    elif tiene_rol(request.user, 'CLI'):
+        try:
+            cliente_actual = Cliente.objects.get(user=request.user)
+            citas = citas.filter(mascota__dueño=cliente_actual).order_by('fecha_hora')
+        except Cliente.DoesNotExist:
+            citas = Cita.objects.none()
+            messages.warning(request, 'Su perfil de cliente no está completo.')
+    return render(request, 'cita/lista.html', {'citas': citas})
