@@ -10,7 +10,7 @@ class FormRegistroEx(UserCreationForm):
 class MascotaForm(forms.ModelForm):
     class Meta:
         model = Mascota
-        fields = ['nombre', 'especie', 'raza', 'fecha_nacimiento', 'sexo', 'color', 'estado']
+        fields = ['nombre', 'dueño', 'especie', 'raza', 'fecha_nacimiento', 'sexo', 'color', 'estado']
         widgets = {
             'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
             'sexo': forms.Select(choices=[('macho', 'macho'), ('hembra', 'hembra')]),
