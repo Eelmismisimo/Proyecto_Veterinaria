@@ -29,7 +29,7 @@ class Mascota(models.Model):
         dueño = models.ForeignKey(Cliente, on_delete=models.CASCADE)
         nombre = models.CharField(max_length=20)
         especie = models.CharField(max_length=20)
-        Raza = models.CharField(max_length=20)
+        raza = models.CharField(max_length=20)
         fecha_nacimiento = models.DateField()
         sexo = models.CharField( max_length=10 ,choices=[('hembra','hembra'),('macho','macho')])
         color = models.CharField(max_length=20)
