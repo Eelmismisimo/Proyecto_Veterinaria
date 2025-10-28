@@ -10,14 +10,6 @@ class UsuarioEx(AbstractUser):
                                                                 ('Cliente','Cliente'),
                                                                 ('Recepcionista','Recepcionista')])
 
-class Cliente(models.Model):
-        usuario= models.OneToOneField(UsuarioEx, on_delete=models.CASCADE)
-        nombre_completo = models.CharField(max_length=50)
-        direccion = models.CharField(max_length=50)
-        telefono_contacto = models.IntegerField()
-        email = models.EmailField()
-        fecha_registro = models.DateField()
-
 class Dueño(models.Model):
         usuario= models.OneToOneField(UsuarioEx, on_delete=models.CASCADE)
         nombre_completo = models.CharField(max_length=50)
