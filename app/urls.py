@@ -5,5 +5,5 @@ urlpatterns = [
     path('mascotas/', views.mascota_listado, name='mascota_listado'),
     path('mascotas/crear/', views.mascota_crear, name='mascota_crear'),
     path('mascotas/editar/<int:id>/', views.mascota_editar, name='mascota_editar'),
-    
+    path('mascotas/eliminar/<int:id>/', views.mascota_eliminar, name='mascota_eliminar'),
 ]
