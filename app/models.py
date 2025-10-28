@@ -41,7 +41,7 @@ class Mascota(models.Model):
         fecha_nacimiento = models.DateField()
         sexo = models.CharField( max_length=10 ,choices=[('hembra','hembra'),('macho','macho')])
         color = models.CharField(max_length=20)
-        estado = models.BooleanField()
+        estado = models.CharField( max_length=10 ,choices=[('activo','activo'),('inactivo','inactivo')])
 
 class Cita(models.Model):
         mascota = models.ForeignKey(Mascota,on_delete=models.CASCADE)
