@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from models import UsuarioEx
 from .models import Mascota
+from .models import Consulta
 
 class FormRegistroEx(UserCreationForm):
     class Meta:
@@ -28,4 +29,16 @@ class CitaForm(forms.ModelForm):
             'motivo_consulta': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'estado': forms.Select(attrs={'class': 'form-select'}),
             'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
+
+class ConsultaForm(forms.ModelForm): #
+    class Meta:
+        model = Consulta
+        fields = ['diagnostico', 'tratamiento_prescrito', 'medicamentos', 'proxima_cita', 'costo_consulta']
+        widgets = {
+            'diagnostico': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'tratamiento_prescrito': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'medicamentos': forms.TextInput(attrs={'class': 'form-control'}),
+            'proxima_cita': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'costo_consulta': forms.NumberInput(attrs={'class': 'form-control'}),
         }
