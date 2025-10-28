@@ -33,7 +33,7 @@ def mascota_crear(request):
     if not (tiene_rol(request.user, 'CLI') or tiene_rol(request.user, 'REC') or tiene_rol(request.user, 'ADM')):
         messages.error(request, 'Acceso denegado.')
         return redirect('dashboard')
-    form = MascotaModelForm(request.POST or None)
+    form = MascotaForm(request.POST or None)
     cliente_actual = None
     if tiene_rol(request.user, 'CLI'):
         try:
@@ -65,7 +65,7 @@ def mascota_editar(request, id):
     else:
         messages.error(request, 'Acceso denegado.')
         return redirect('dashboard')
-    form = MascotaModelForm(request.POST or None, instance=mascota)
+    form = MascotaForm(request.POST or None, instance=mascota)
     if tiene_rol(request.user, 'CLI'):
         form.fields['dueño'].widget = forms.HiddenInput()
     if request.method == 'POST' and form.is_valid():
