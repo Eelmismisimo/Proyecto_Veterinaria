@@ -22,7 +22,7 @@ class Veterinario(models.Model):
         usuario= models.OneToOneField(UsuarioEx, on_delete=models.CASCADE)
         nombre_completo = models.CharField(max_length=50)
         especialidad = models.CharField(max_length=50)
-        licencia_profesional = models.ImageField()
+        licencia_profesional = models.CharField(max_length=50)
         telefono = models.IntegerField()
 
 class Mascota(models.Model):
