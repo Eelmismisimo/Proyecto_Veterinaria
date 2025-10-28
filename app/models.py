@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 
 class UsuarioEx(AbstractUser):
@@ -30,18 +31,18 @@ class Veterinario(models.Model):
         usuario= models.OneToOneField(UsuarioEx, on_delete=models.CASCADE)
         nombre_completo = models.CharField(max_length=50)
         especialidad = models.CharField(max_length=50)
-        licencia_profesional = models.ImageField()
+        licencia_profesional = models.CharField(max_length=50)
         telefono = models.IntegerField()
 
 class Mascota(models.Model):
         dueño = models.ForeignKey(Cliente, on_delete=models.CASCADE)
         nombre = models.CharField(max_length=20)
         especie = models.CharField(max_length=20)
-        Raza = models.CharField(max_length=20)
+        raza = models.CharField(max_length=20)
         fecha_nacimiento = models.DateField()
         sexo = models.CharField( max_length=10 ,choices=[('hembra','hembra'),('macho','macho')])
         color = models.CharField(max_length=20)
-        estado = models.BooleanField()
+        estado = models.CharField( max_length=10 ,choices=[('activo','activo'),('inactivo','inactivo')])
 
 class Cita(models.Model):
         mascota = models.ForeignKey(Mascota,on_delete=models.CASCADE)
@@ -59,3 +60,21 @@ class HistorialMedico(models.Model):
         tratamiento_prescrito = models.CharField(max_length=100)
         medicamentos = models.CharField(max_length=30)
         costo_consulta = models.IntegerField()
+
+class Consulta(models.Model): 
+    cita = models.OneToOneField(Cita, on_delete=models.CASCADE, related_name='consulta', primary_key=True)
+    fecha_consulta = models.DateField(auto_now_add=True) 
+    diagnostico = models.TextField(max_length=500) 
+    tratamiento_prescrito = models.TextField(max_length=500)
+    medicamentos = models.CharField(max_length=200, blank=True) 
+    proxima_cita = models.DateField(null=True, blank=True)
+    costo_consulta = models.IntegerField() 
+    def __str__(self):
+        return f"Consulta {self.pk} - {self.cita.mascota.nombre} ({self.fecha_consulta})"
+    class Meta:
+        ordering = ['-fecha_consulta']
+    def clean(self):
+        if self.costo_consulta < 5000 or self.costo_consulta > 200000:
+            raise ValidationError('El costo de la consulta debe ser mayor a $5000 y menor a $200000.')
+        if self.fecha_consulta < self.cita.fecha_hora.date():
+             raise ValidationError('La fecha de consulta no puede ser anterior a la cita programada.')
