@@ -4,8 +4,8 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django import forms
 from .models import Mascota, Dueño
-from .forms import MascotaForm
-from .forms import CitaForm
+from .forms import MascotaForm, CitaForm
+
 
 def tiene_rol(user, rol_code):
     if not user.is_authenticated:
@@ -101,7 +101,7 @@ def cita_crear(request):
     if not (tiene_rol(request.user, 'REC') or tiene_rol(request.user, 'ADM')):
         messages.error(request, 'Acceso denegado. Solo la Recepcionista puede agendar citas.')
         return redirect('dashboard')
-    form = CitaModelForm(request.POST or None)
+    form = CitaForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         nueva_cita = form.save(commit=False)
         if not nueva_cita.estado:
@@ -121,7 +121,7 @@ def cita_modificar(request, id):
         messages.error(request, 'Acceso denegado. Solo la Recepcionista puede modificar citas.')
         return redirect('dashboard')
     cita = get_object_or_404(Cita, id=id)
-    form = CitaModelForm(request.POST or None, instance=cita)
+    form = CitaForm(request.POST or None, instance=cita)
     if request.method == 'POST' and form.is_valid():
         cita_modificada = form.save(commit=False)
         try:
