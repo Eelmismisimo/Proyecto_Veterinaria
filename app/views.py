@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from django import forms
 from .models import Mascota, Dueño
 from .forms import MascotaForm, CitaForm
+from datetime import date
+from .models import Cita, Veterinario, Consulta 
+from .forms import ConsultaForm 
 
 
 def tiene_rol(user, rol_code):
@@ -166,3 +169,63 @@ def cita_listado(request):
             citas = Cita.objects.none()
             messages.warning(request, 'Su perfil de cliente no está completo.')
     return render(request, 'cita/lista.html', {'citas': citas})
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+def citas_del_dia(request):
+    if not (tiene_rol(request.user, 'VET') or tiene_rol(request.user, 'ADM')):
+        messages.error(request, 'Acceso denegado. Solo Veterinarios pueden ver esta agenda.')
+        return redirect('dashboard')
+    today = timezone.now().date()
+    citas = Cita.objects.filter(fecha_hora__date=today).order_by('fecha_hora')
+    if tiene_rol(request.user, 'VET'):
+        try:
+            veterinario_actual = Veterinario.objects.get(user=request.user)
+            citas = citas.filter(veterinario=veterinario_actual)
+        except Veterinario.DoesNotExist:
+            citas = Cita.objects.none()
+            messages.error(request, 'Perfil de Veterinario no encontrado.')
+    citas_pendientes = citas.filter(estado='PRO').exclude(consulta__isnull=False)
+    context = {
+        'citas': citas_pendientes,
+        'hoy': today,
+        'titulo': 'Citas Pendientes del Día',
+    }
+    return render(request, 'consulta/agenda_dia.html', context) 
+  # ----------------------------------------------------------------------
+def registrar_consulta(request, cita_id):
+    if not (tiene_rol(request.user, 'VET') or tiene_rol(request.user, 'ADM')):
+        messages.error(request, 'Acceso denegado. Solo Veterinarios pueden registrar consultas.')
+        return redirect('dashboard')
+    cita = get_object_or_404(Cita, id=cita_id)
+    if tiene_rol(request.user, 'VET'):
+        try:
+            veterinario_actual = Veterinario.objects.get(user=request.user)
+            if cita.veterinario != veterinario_actual:
+                messages.error(request, 'Solo puede registrar consultas de sus citas asignadas.')
+                return redirect('citas_del_dia')
+        except Veterinario.DoesNotExist:
+            messages.error(request, 'Perfil de Veterinario no encontrado.')
+            return redirect('dashboard')
+    if hasattr(cita, 'consulta'):
+        messages.warning(request, 'Esta cita ya tiene una consulta médica registrada.')
+        return redirect('citas_del_dia')
+    form = ConsultaForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        consulta = form.save(commit=False)
+        consulta.cita = cita 
+        try:
+            consulta.full_clean() 
+            consulta.save()
+            cita.estado = 'COM'
+            cita.save()
+            messages.success(request, f'Consulta y diagnóstico registrados para {cita.mascota.nombre}. Cita marcada como completada.')
+            return redirect('historial_mascota', mascota_id=cita.mascota.id)
+        except ValidationError as e:
+            form.add_error(None, e) 
+            messages.error(request, 'Error de validación al registrar la consulta.')
+    context = {
+        'form': form,
+        'cita': cita,
+        'titulo': f'Registrar Consulta para {cita.mascota.nombre}',
+    }
+    return render(request, 'consulta/registrar_consulta.html', context) #
