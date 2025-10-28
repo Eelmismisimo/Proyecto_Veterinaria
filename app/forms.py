@@ -16,3 +16,16 @@ class MascotaForm(forms.ModelForm):
             'sexo': forms.Select(choices=[('macho', 'macho'), ('hembra', 'hembra')]),
             'estado': forms.Select(choices=[('activo', 'activo'), ('inactivo', 'inactivo')]),
         }
+
+class CitaForm(forms.ModelForm):
+    class Meta:
+        model = Cita
+        fields = ['mascota', 'veterinario', 'fecha_hora', 'motivo_consulta', 'estado', 'observaciones']
+        widgets = {
+            'mascota': forms.Select(attrs={'class': 'form-select'}),
+            'veterinario': forms.Select(attrs={'class': 'form-select'}),
+            'fecha_hora': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}), 
+            'motivo_consulta': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'estado': forms.Select(attrs={'class': 'form-select'}),
+            'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
