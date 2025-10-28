@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from models import UsuarioEx
-from .models import mascota.html
+from .models import Mascota
 
 class FormRegistroEx(UserCreationForm):
     class Meta:
