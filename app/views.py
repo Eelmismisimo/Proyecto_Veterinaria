@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django import forms
-from .models import Mascota, Cliente
+from .models import Mascota, Dueño
 from .forms import MascotaForm
 
 def tiene_rol(user, rol_code):
