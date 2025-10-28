@@ -6,4 +6,9 @@ urlpatterns = [
     path('mascotas/crear/', views.mascota_crear, name='mascota_crear'),
     path('mascotas/editar/<int:id>/', views.mascota_editar, name='mascota_editar'),
     path('mascotas/eliminar/<int:id>/', views.mascota_eliminar, name='mascota_eliminar'),
+
+    path('citas/', views.cita_listado, name='cita_listado'),
+    path('citas/agendar/', views.cita_crear, name='cita_crear'), 
+    path('citas/modificar/<int:id>/', views.cita_modificar, name='cita_modificar'), 
+    path('citas/cancelar/<int:id>/', views.cita_cancelar, name='cita_cancelar'),
 ]
